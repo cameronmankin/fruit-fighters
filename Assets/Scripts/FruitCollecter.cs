@@ -6,22 +6,23 @@ using TMPro;
 
 public class FruitCollecter : MonoBehaviour
 {
-    [SerializeField] private CherryManager _cherryManager;
-    [SerializeField] private TMP_Text _cherriesText;
+    [SerializeField] private FruitManager _fruitManager;
+    [SerializeField] private TMP_Text _fruitText;
     
-    private int _cherryCount;
+    private int _fruitCount;
     
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        // Look for cherry components on the thing we've collided with
-        Cherry possibleCherry = collider.GetComponent<Cherry>();
+        // Look for fruit components on the thing we've collided with
+        Fruit possibleFruit = collider.GetComponent<Fruit>();
         
-        // If there is a cherry component, then we've found a cherry! Consume it!
-        if (possibleCherry != null)
+        // If there is a fruit component, then we've found a fruit! Consume it!
+        if (possibleFruit != null)
         {
-            _cherryManager.DestroyCherry(possibleCherry.gameObject);
-            _cherryCount++;
-            _cherriesText.text = "Cherries: " + _cherryCount;
+            _fruitManager.UnlistFruit(possibleFruit.gameObject);
+            _fruitCount++;
+            _fruitText.text = "Fruit: " + _fruitCount;
+            possibleFruit.DestroyFruit();
         }
     }
 }
