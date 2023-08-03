@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -10,11 +11,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask jumpableGround;
     
     private Rigidbody2D _rigidBody;
-    private Animator _animator;
+    private SpriteAnimator _animator;
     private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _boxCollider;
     
-    // This enumerates all of our different animation states. Cast to int for the animator.
+    // This enumerates all of our different animation states
     private enum MovementState { Idle, Running, Jumping, Falling }
     
     // Start is called before the first frame update
@@ -22,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _rigidBody = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _animator = GetComponent<Animator>();
+        _animator = GetComponent<SpriteAnimator>();
         _boxCollider = GetComponent<BoxCollider2D>();
     }
     
@@ -48,20 +49,20 @@ public class PlayerMovement : MonoBehaviour
         // By default, our character is idle
         MovementState state = MovementState.Idle;
         
-        // Checks for horizontal input and sets our movement state appropriately.
-        if (dirX > 0f)
+        // Checks for horizontal input and sets our movement state appropriately. Checks against .1 and -.1 to avoid animating at the very end of deceleration
+        if (dirX > 0)
         {
             state = MovementState.Running;
             _spriteRenderer.flipX = false;
         }
-        else if (dirX < 0f)
+        else if (dirX < 0)
         {
             state = MovementState.Running;
             _spriteRenderer.flipX = true;
         }
         
-        //Checks our y velocity and sets movement state. flipX is retained from above, but this overwrites
-        //because it's higher priority. Checks against .1 instead of 0 to deal with inherent imprecision in engine.
+        // Checks our y velocity and sets movement state. flipX is retained from above, but this overwrites
+        // because it's higher priority. Checks against .001 instead of 0 to deal with inherent imprecision in engine.
         if (_rigidBody.velocity.y > .001f)
         {
             state = MovementState.Jumping;
@@ -71,8 +72,15 @@ public class PlayerMovement : MonoBehaviour
             state = MovementState.Falling;
         }
         
-        //Cast state to Int to send to the animator.
-        _animator.SetInteger("State", (int)state);
+        // Play the appropriate animation (by string lookup)
+        var animName = state switch
+        {
+            MovementState.Idle => "Idle",
+            MovementState.Running => "Run",
+            MovementState.Jumping => "Jump",
+            MovementState.Falling => "Fall"
+        };
+        _animator.PlayAnimation(animName);
     }
 
     private bool IsGrounded()
