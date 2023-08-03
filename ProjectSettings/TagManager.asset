@@ -51,3 +51,6 @@ TagManager:
   - name: Characters
     uniqueID: 130985977
     locked: 0
+  - name: Fruit
+    uniqueID: 1334733491
+    locked: 0
